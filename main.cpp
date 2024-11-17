@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cstdlib>
 #include <ctime>
+#include <iomanip>
 
 using namespace std;
 
@@ -33,48 +34,54 @@ int seq_search(vector<int> &keys, int key, int start, int stop, int &numCmp) {
 }
 
 // Binary search
-int bin_search(vector<int> &keys, int key, int &numCmp) {
+int bin_search(const vector<int>& keys, int key, int& numComparisons) {
     int left = 0, right = keys.size() - 1;
-    numCmp = 0;
+    numComparisons = 0;
 
     while (left <= right) {
-        int mid = left + (right - left) / 2;
-        numCmp++;
+        numComparisons++;
+        int mid = (right + left) / 2;
+
         if (keys[mid] == key) {
-            return mid; // returns index once key is found
+            return mid; 
         } else if (keys[mid] < key) {
             left = mid + 1;
         } else {
             right = mid - 1;
         }
     }
-    return -1; //returns if key is never found
 
+    return -1;
 }
 
 // Enhanced binary search: switches to sequential search if remaining range is < 15
-int bin2_search(vector<int> &keys, int key, int &numCmp) {
+int bin2_search(const vector<int>& keys, int key, int& numComparisons) {
     int left = 0, right = keys.size() - 1;
-        numCmp = 0;
+    numComparisons = 0;
 
-        while (left <= right) {
-            if (right - left + 1 < 15) { // Switch to sequential search
-                return seq_search(keys, key, left, right, numCmp);
-            }
+    while (right - left + 1 > 15) { // Switch to sequential search if range size <= 15
+        numComparisons++;
+        int mid = (right + left) / 2;
 
-            int mid = left + (right - left) / 2;
-            numCmp++;
-            if (keys[mid] == key) {
-                return mid; 
-            } else if (keys[mid] < key) {
-                left = mid + 1;
-            } else {
-                right = mid - 1;
-            }
+        if (keys[mid] == key) {
+            return mid;
+        } else if (keys[mid] < key) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
         }
-        return -1; 
-}
+    }
+    
+    for (int i = left; i <= right; ++i) {//sequential search for the remaining range
+        numComparisons++;
+        if (keys[i] == key) {
+            return i; 
+        }
+    }
 
+  
+    return -1;
+}
 // Test the search algorithms
 int main() {
     // Initialize random seed
@@ -102,6 +109,22 @@ int main() {
     }
 
     // Test each search algorithm, output results
+    cout << setw(10) << "Search" << setw(10) << "Found" << setw(15) << "Seq. search" << setw(15) << "Bin search" << setw(20) << "Enhanced search" << endl;//headers for output
+    for (int key : foundKeys) {
+        int index, numCmpSeq, numCmpBin, numCmpBin2;
+        index = seq_search(keys, key, numCmpSeq);
+        index = bin_search(keys, key, numCmpBin);
+        index = bin2_search(keys, key, numCmpBin2);
+        cout << setw(10) << key << setw(10) << (index != -1 ? keys[index] : -1)<< setw(15) << numCmpSeq << setw(15) << numCmpBin<< setw(20) << numCmpBin2 << endl;
+    }
+    for (int key : randomKeys) {
+        int index, numCmpSeq, numCmpBin, numCmpBin2;
+        index = seq_search(keys, key, numCmpSeq);
+        index = bin_search(keys, key, numCmpBin);
+        index = bin2_search(keys, key, numCmpBin2);
+        cout << setw(10) << key << setw(10) << (index != -1 ? keys[index] : -1)<< setw(15) << numCmpSeq << setw(15) << numCmpBin<< setw(20) << numCmpBin2 << endl;
+    }
 
     return 0;
 }
+
