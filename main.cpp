@@ -21,6 +21,14 @@ int seq_search(vector<int> &keys, int key, int &numCmp) {
 
 // Sequential search with start and stop range
 int seq_search(vector<int> &keys, int key, int start, int stop, int &numCmp) {
+    numCmp = 0;
+    for (int i = start; i <= stop; ++i) {
+        numCmp++;
+        if (keys[i] == key) {
+            return i; // returns the index of where the key was found
+        }
+    }
+    return -1; // returns if the search didn't find the key
 
 }
 
