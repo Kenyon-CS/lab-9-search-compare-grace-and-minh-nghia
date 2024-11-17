@@ -34,6 +34,21 @@ int seq_search(vector<int> &keys, int key, int start, int stop, int &numCmp) {
 
 // Binary search
 int bin_search(vector<int> &keys, int key, int &numCmp) {
+    int left = 0, right = keys.size() - 1;
+    numCmp = 0;
+
+    while (left <= right) {
+        int mid = left + (right - left) / 2;
+        numCmp++;
+        if (keys[mid] == key) {
+            return mid; // returns index once key is found
+        } else if (keys[mid] < key) {
+            left = mid + 1;
+        } else {
+            right = mid - 1;
+        }
+    }
+    return -1; //returns if key is never found
 
 }
 
